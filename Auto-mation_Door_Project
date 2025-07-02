@@ -1,0 +1,94 @@
+
+
+
+
+/*
+  Ultrasonic Sensor HC-SR04 and Arduino Tutorial
+
+
+  by Dejan Nedelkovski,
+  www.HowToMechatronics.com
+
+
+*/
+// defines pins numbers
+const int trigPin = 6;
+const int echoPin = 7;
+const int motorEnablePin = 10;  // ENA pin on L298N
+const int motorEnablePin1 = 11;  // ENA pin on L298N
+const int motorIn1 = 8;         // IN1 pin on L298N
+const int motorIn2 = 9;         // IN2 pin on L298N
+const int motorIn3 = 13;         // IN1 pin on L298N
+const int motorIn4 = 12;         // IN2 pin on L298N
+// defines variables
+long duration;
+int distance;
+void setup() {
+  pinMode(trigPin, OUTPUT); // Sets the trigPin as an Output
+  pinMode(echoPin, INPUT); // Sets the echoPin as an Input
+  Serial.begin(9600); // Starts the serial communication
+}
+void loop() {
+  // Clears the trigPin
+  digitalWrite(trigPin, LOW);
+  delayMicroseconds(2);
+  // Sets the trigPin on HIGH state for 10 micro seconds
+  digitalWrite(trigPin, HIGH);
+  delayMicroseconds(10);
+  digitalWrite(trigPin, LOW);
+  // Reads the echoPin, returns the sound wave travel time in microseconds
+  duration = pulseIn(echoPin, HIGH);
+  // Calculating the distance
+  distance = duration * 0.034 / 2;
+  // Prints the distance on the Serial Monitor
+  Serial.print("Distance: ");
+  Serial.println(distance);
+  door_open(distance);
+}
+
+
+void door_open(int distance)
+{
+   if (distance < 24)
+   {
+    // Motion detected, turn motor on
+    digitalWrite(motorIn1, HIGH);
+    digitalWrite(motorIn2, LOW);
+    analogWrite(motorEnablePin, 255);  // Full speed
+    Serial.println("Motion detected - Motor ON");
+    delay(2000);  // Motor runs for 1 second
+    analogWrite(motorEnablePin,LOW);  // Disable the motor by setting the enable pin to 0
+    digitalWrite(motorIn1, LOW);
+    digitalWrite(motorIn2, LOW);  // Set both inputs low to stop the motor
+    Serial.println("Motor OFF");
+    delay(2000);
+    // Motion detected, turn motor on
+    digitalWrite(motorIn3, HIGH);
+    digitalWrite(motorIn4, LOW);
+    analogWrite(motorEnablePin1, 255);  // Full speed
+    Serial.println("Motion detected - Motor ON");
+    delay(2000);  // Motor runs for 1 second
+    analogWrite(motorEnablePin1,LOW);  // Disable the motor by setting the enable pin to 0
+    digitalWrite(motorIn3, LOW);
+    digitalWrite(motorIn4, LOW);  // Set both inputs low to stop the motor
+    Serial.println("Motor OFF");
+  }
+  else
+  {
+    // No motion, turn motor off
+    //digitalWrite(motorIn1, LOW);
+    //digitalWrite(motorIn2, LOW);
+    //analogWrite(motorEnablePin, 0);
+    Serial.println("No motion - Motor OFF");
+  }
+}
+
+
+
+
+
+
+
+
+
+
